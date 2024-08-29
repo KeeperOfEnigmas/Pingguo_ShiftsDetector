@@ -27,10 +27,11 @@ url_shifts = "https://lothianeol.allocate-cloud.com/EmployeeOnlineMobile/LOTHIAN
 path_to_driver_edge = "C:\\Users\\david\\Desktop\\pingguo\\msedgedriver.exe"
 
 refresh_timer = 3 # in minutes
+shift_found = False
     
 # send notification email
 def send_email(subject, body, email, password):
-    msg = MIMEText(body)
+    msg = MIMEText(body+" "+day+"!")
     msg['Subject'] = subject
     msg['From'] = email
     msg['To'] = email
@@ -39,8 +40,8 @@ def send_email(subject, body, email, password):
         smtp_server.sendmail(email, email, msg.as_string())
     print("Email notification sent!")
 
-# detect if job is available
-def detect_job(driver, refresh_timer):
+# detect if a shift is available
+def detect_job(driver, refresh_timer, day):
     curr_url = driver.current_url
     if curr_url != url:
         if curr_url != url_shifts:
@@ -49,20 +50,24 @@ def detect_job(driver, refresh_timer):
     while True:
         driver.refresh()
         time.sleep(10)
+        shift_found = False
         
         try:
-            element = driver.find_element(By.TAG_NAME, "h")
-            #element = driver.find_element(By.ID, "offline-state-overlay")
+            elements = driver.find_elements(By.CSS_SELECTOR, "span.sub")
+            
+            if elements != None:
+                for e in elements:
+                    if e.text == day:
+                        print("Shift found!")
+                        shift_found = True
+                        send_email(subject, body, email, password)
+                if not(shift_found):
+                    print("No shift found!")
         except:
-            pass   
-        try:
-            if element != None:
-                print(element.text)
-                #send_email(subject, body, email, password)
-        except:
-                print("No shift found!")
-        
+            print("Currently no available shift at all!")   
+
         time.sleep(refresh_timer*60-10)
+        #time.sleep(10)
     
 # terminate the program
 def terminate(driver):
@@ -78,9 +83,13 @@ def initialize_driver():
     
     return driver
 
+
+
 try:
+    day = input("Enter which day you want(capitalized): ")
+    print("Program running!")
     driver = initialize_driver()
-    detect_job(driver, refresh_timer)
+    detect_job(driver, refresh_timer, day)
 except KeyboardInterrupt:
     terminate(driver)
     print("Program terminate!")
