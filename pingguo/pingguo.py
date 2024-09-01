@@ -24,7 +24,7 @@ password = "hgfdsa765432"
 
 url = "https://lothianeol.allocate-cloud.com/EmployeeOnlineMobile/LOTHIANLIVE/#/login"
 url_shifts = "https://lothianeol.allocate-cloud.com/EmployeeOnlineMobile/LOTHIANLIVE/#/bankshifts/shifts"
-path_to_driver_edge = "C:\\Users\\david\\Desktop\\pingguo\\msedgedriver.exe"
+path_to_driver_edge = "C:\\Users\\Arthur\\Desktop\\pingguo\\msedgedriver.exe"
 
 refresh_timer = 3 # in minutes
 shift_found = False
