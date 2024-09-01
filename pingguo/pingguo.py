@@ -51,20 +51,18 @@ def detect_job(driver, refresh_timer, day):
         driver.refresh()
         time.sleep(10)
         shift_found = False
-        
-        try:
-            elements = driver.find_elements(By.CSS_SELECTOR, "span.sub")
+               
+        elements = driver.find_elements(By.CSS_SELECTOR, "span.sub")
             
-            if elements != None:
-                for e in elements:
-                    if e.text == day:
-                        print("Shift found!")
-                        shift_found = True
-                        send_email(subject, body, email, password)
-                if not(shift_found):
-                    print("No shift found!")
-        except:
-            print("Currently no available shift at all!")   
+        for e in elements:
+            if e.text == day:
+                print("Shift found!")
+                shift_found = True
+                send_email(subject, body, email, password)
+                terminate(driver)
+                return
+        if not(shift_found):
+            print("No shift found!")  
 
         time.sleep(refresh_timer*60-10)
         #time.sleep(10)
@@ -72,15 +70,14 @@ def detect_job(driver, refresh_timer, day):
 # terminate the program
 def terminate(driver):
     driver.quit()
+    print("Program terminate!")
     
 # initialize edge driver 
 def initialize_driver():
     options = Options()
     options.add_experimental_option("debuggerAddress", "localhost:9222")
     driver_path = path_to_driver_edge
-
-    driver = webdriver.Edge(options=options, service=Service(driver_path))
-    
+    driver = webdriver.Edge(options=options, service=Service(driver_path))    
     return driver
 
 
@@ -92,5 +89,5 @@ try:
     detect_job(driver, refresh_timer, day)
 except KeyboardInterrupt:
     terminate(driver)
-    print("Program terminate!")
+    
     
