@@ -10,3 +10,7 @@
 8) 在打开的网页中登录并转到Available Bank Duties
 9) 等待通知
 10) 退出：```ctrl+c```
+
+## 注意事项
+- msedgedriver.exe的版本必须与Edge版本相符
+  - 下载：https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/?form=MA13LH
