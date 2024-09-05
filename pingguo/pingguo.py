@@ -51,21 +51,28 @@ def detect_job(driver, refresh_timer, day):
         driver.refresh()
         time.sleep(10)
         shift_found = False
-               
-        elements = driver.find_elements(By.CSS_SELECTOR, "span.sub")
-            
-        for e in elements:
-            if e.text == day:
-                print("Shift found!")
-                shift_found = True
-                send_email(subject, body, email, password)
-                terminate(driver)
-                return
+
+        elements_date = driver.find_elements(By.CSS_SELECTOR, "span.sub")
+                   
+        for e_date in elements_date:
+            if e_date.text == day:
+
+                elements_time = driver.find_elements(By.CSS_SELECTOR, "span.time-display")
+
+                for e_time in elements_time:
+                    if "08:00" in e_time.text:
+                        print("Early shift found!")
+                        print("Shift starts from: " + e_time.text)
+
+                        shift_found = True
+                        send_email(subject, body, email, password)
+                        terminate(driver)
+                        return
         if not(shift_found):
             print("No shift found!")  
 
         time.sleep(refresh_timer*60-10)
-        #time.sleep(10)
+        #time.sleep(5)
     
 # terminate the program
 def terminate(driver):
