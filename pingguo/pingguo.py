@@ -65,7 +65,7 @@ def detect_job(driver, refresh_timer, day):
                         print("Shift starts from: " + e_time.text)
 
                         shift_found = True
-                        send_email(subject, body, email, password)
+                        send_email(subject, body, email, email_password)
                         terminate(driver)
                         return
         if not(shift_found):
