@@ -41,7 +41,7 @@ def send_email(subject, body, email, password):
     print("Email notification sent!")
 
 # detect if a shift is available
-def detect_job(driver, refresh_timer, day):
+def detect_shift(driver, refresh_timer, day):
     curr_url = driver.current_url
     if curr_url != url:
         if curr_url != url_shifts:
@@ -52,22 +52,24 @@ def detect_job(driver, refresh_timer, day):
         time.sleep(10)
         shift_found = False
 
-        elements_date = driver.find_elements(By.CSS_SELECTOR, "span.sub")
-                   
-        for e_date in elements_date:
-            if e_date.text == day:
+        elements_time = driver.find_elements(By.CLASS_NAME, "list")
 
-                elements_time = driver.find_elements(By.CSS_SELECTOR, "span.time-display")
+        for e_time in (elements_time):
+            try:
+                text = e_time.text
+                index = text.find(day)
+                subText = text[index:]
+                if "08:00" in subText:
+                    print("Early shift found!")
+                    print("Shift starts from: " + text[index:index+len(day)])
 
-                for e_time in elements_time:
-                    if "08:00" in e_time.text:
-                        print("Early shift found!")
-                        print("Shift starts from: " + e_time.text)
+                    shift_found = True
+                    send_email(subject, body, email, email_password)
+                    terminate(driver)
+                    return        
+            except:
+                pass
 
-                        shift_found = True
-                        send_email(subject, body, email, email_password)
-                        terminate(driver)
-                        return
         if not(shift_found):
             print("No shift found!")  
 
@@ -93,7 +95,7 @@ try:
     day = input("Enter which day you want(capitalized): ")
     print("Program running!")
     driver = initialize_driver()
-    detect_job(driver, refresh_timer, day)
+    detect_shift(driver, refresh_timer, day)
 except KeyboardInterrupt:
     terminate(driver)
     
